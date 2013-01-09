@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'methadone'
+require 'papernote'
+
+class App
+  include Methadone::Main
+  include Methadone::CLILogging
+
+  main do |paperformat|
+    paperformat=paperformat.capitalize.to_sym
+    debug "Linetype is: #{paperformat}"
+    raise "Unknown paperformat: #{paperformat}.\nValid formats are: 'cornell'" unless [:Cornell].include?(paperformat)
+    debug "#{options.reject{ |k,_| k.is_a?(Symbol) || k.length == 1}}"
+    Papernote.generate(paperformat, options)
+  end
+
+  description "Produce personalized notebook paper"
+
+  on("-a", "--area [TYPE]", [:ruled, :graph, :blank], "main area grid line type (graph, ruled, blank) [default: graph]")
+  on("-t", "--title [STR]", "text in the 'title' area of the sheet")
+  on("-o", "--output [PATH]", "output file name")
+  on("-n", "--name [STR]", "text in the 'name' area of the sheet")
+  on("-d", "--date [STR]", "text in the 'date' area of the sheet. Use ")
+  on("-c", "--color [CODE]", "the color of the grid in the main area")
+  on("-s", "--spacing [NUM]", Integer, "size of the grid or distance between rules in the main area")
+  on("-l", "--holes [NUM]", [2,3,4,0], "Number of holes")
+  on("-m", "--[no-]mirror", "Use two sided sheets (second page is mirror of first)")
+
+  arg :paperformat, "The type of notes you want to take (currently only 'cornell' is recognized)"
+
+  version Papernote::VERSION
+
+  use_log_level_option
+
+  go!
+
+end
