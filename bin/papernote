@@ -8,6 +8,8 @@ class App
   include Methadone::Main
   include Methadone::CLILogging
 
+  leak_exceptions(true)
+
   main do |paperformat|
     paperformat=paperformat.capitalize.to_sym
     debug "Linetype is: #{paperformat}"
@@ -24,8 +26,8 @@ class App
   on("-n", "--name [STR]", "text in the 'name' area of the sheet")
   on("-d", "--date [STR]", "text in the 'date' area of the sheet. Use ")
   on("-c", "--color [CODE]", "the color of the grid in the main area")
-  on("-s", "--spacing [NUM]", Integer, "size of the grid or distance between rules in the main area")
-  on("-l", "--holes [NUM]", [2,3,4,0], "Number of holes")
+  on("-s", "--spacing [NUM]", Integer, "size of the grid or distance between rules in the main area (in mm)")
+  on("-l", "--holes [NUM]", Integer, "Number of holes", /0|2|3|4/)
   on("-m", "--[no-]mirror", "Use two sided sheets (second page is mirror of first)")
 
   arg :paperformat, "The type of notes you want to take (currently only 'cornell' is recognized)"
