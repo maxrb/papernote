@@ -28,7 +28,8 @@ class Cornell
   end
 
   def make_holes
-    holes = Integer(@options[:holes]) || 0
+    holes = @options[:holes] || 0
+    holes = Integer(holes)
     if holes > 0
       from_left = 11.mm
       hole_radius = 5.mm / 2
