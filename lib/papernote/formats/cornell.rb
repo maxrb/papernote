@@ -22,22 +22,20 @@ class Cornell
     @pdf.start_new_page
     make_title_area(:mirror)
     make_cue_area(:mirror)
-    make_holes(:mirror)
     make_notes_area(:mirror)
     make_review_area(:mirror)
     @pdf
   end
 
-  def make_holes(mirror=false)
+  def make_holes
     holes = Integer(@options[:holes]) || 0
     if holes > 0
       from_left = 11.mm
-      from_left = @width - from_left if mirror
       hole_radius = 5.mm / 2
       margin = hole_radius + ((296.mm - ((holes -1) * 80.mm)) / 2)
       debug("Hole margin is #{margin}")
       debug("Hole gap is #{80.mm}")
-      margin.step(296.mm, 80.mm) do |h|
+      margin.step(@height, 80.mm) do |h|
         debug("Hole at #{[from_left, h]}, radius #{hole_radius}")
         @pdf.stroke_circle([from_left, h], hole_radius)
       end
@@ -53,8 +51,8 @@ class Cornell
       to = @width - to
     end
     @pdf.stroke do
-      @pdf.horizontal_line from, to, at: 60.mm
-      @pdf.vertical_line 60.mm, 296.mm, at: to
+      @pdf.horizontal_line from, to, at: 55.mm
+      @pdf.vertical_line 55.mm, @height, at: to
     end
     debug("Cue area end")
   end
@@ -79,8 +77,8 @@ class Cornell
     end
 
     @pdf.stroke do
-      @pdf.vertical_line 60.mm, 296.mm, at: left
-      @pdf.horizontal_line left, right, at: 60.mm
+      @pdf.vertical_line 55.mm, @height, at: left
+      @pdf.horizontal_line left, right, at: 55.mm
     end
     make_grid_area(@options[:area].to_sym, mirror)
   end
@@ -132,7 +130,7 @@ class Cornell
 
   def make_review_area(mirror=false)
     @pdf.stroke do
-      @pdf.horizontal_line 0, 210.mm, at: 59.mm
+      @pdf.horizontal_line 0, 210.mm, at: 54.mm
     end
   end
 

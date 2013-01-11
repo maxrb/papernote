@@ -12,7 +12,11 @@ Install as any gem:
 
 ## Usage
 
-TODO: Write usage instructions here
+    $ papernote cornell [options]
+    
+Options description follows:
+
+
 
 ## Contributing
 
