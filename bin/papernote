@@ -13,7 +13,7 @@ class App
   main do |paperformat|
     paperformat=paperformat.capitalize.to_sym
     debug "Linetype is: #{paperformat}"
-    raise "Unknown paperformat: #{paperformat}.\nValid formats are: 'cornell'" unless [:Cornell].include?(paperformat)
+    raise "Unknown paperformat: #{paperformat}.\nValid formats are: 'cornell', 'note'" unless [:Cornell, :Note].include?(paperformat)
     debug "#{options.reject{ |k,_| k.is_a?(Symbol) || k.length == 1}}"
     Papernote.generate(paperformat, options)
   end
@@ -30,7 +30,7 @@ class App
   on("-l", "--holes [NUM]", Integer, "Number of holes", /0|2|3|4/)
   on("-m", "--[no-]mirror", "Use two sided sheets (second page is mirror of first)")
 
-  arg :paperformat, "The type of notes you want to take (currently only 'cornell' is recognized)"
+  arg :paperformat, "The type of notes you want to take"
 
   version Papernote::VERSION
 
