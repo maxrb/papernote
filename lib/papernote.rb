@@ -1,6 +1,7 @@
 require "papernote/version"
 require "papernote/formats/cornell"
-require "papernote/formats/note"
+require "papernote/formats/ruled"
+require "papernote/formats/graph"
 
 module Papernote
   def self.generate(format, options={})

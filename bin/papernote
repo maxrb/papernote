@@ -13,7 +13,7 @@ class App
   main do |paperformat|
     paperformat=paperformat.capitalize.to_sym
     debug "Linetype is: #{paperformat}"
-    raise "Unknown paperformat: #{paperformat}.\nValid formats are: 'cornell', 'note'" unless [:Cornell, :Note].include?(paperformat)
+    raise "Unknown paperformat: #{paperformat}.\nValid formats are: 'cornell', 'ruled', 'graph'" unless [:Cornell, :Ruled, :Graph].include?(paperformat)
     debug "#{options.reject{ |k,_| k.is_a?(Symbol) || k.length == 1}}"
     Papernote.generate(paperformat, options)
   end
