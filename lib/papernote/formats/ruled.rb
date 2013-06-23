@@ -4,27 +4,25 @@ require 'prawn'
 require 'prawn/measurement_extensions'
 require 'methadone'
 
-class Note
+class Ruled
   include Methadone::CLILogging
 
   def initialize(options={})
     @pdf = Prawn::Document.new
-    @pdf.line_width = 1
+    @pdf.line_width = 0.25.mm
     (@width, @height) = @pdf.page.dimensions[2,3]
     debug("Dimensions are W: #{@width}, H: #{@height}")
     @options = { area: :graph, spacing: 16.12, color: "BEBEBE" }.merge(options)
   end
 
   def make_page
-    draw_line
+    draw_header
+    draw_body
+    draw_footer
     @pdf
   end
 
-  def draw_line
-    @pdf.line_width = 0.25.mm
-
-    puts "Margin height: #{@pdf.margin_box.height}"
-
+  def draw_header
     @pdf.stroke_color = "ABABAB"
 
     # Draw title area
@@ -32,13 +30,13 @@ class Note
       @pdf.stroke_bounds
     end
 
+    # Draw date area
     @pdf.bounding_box([@pdf.margin_box.width - 35.mm,@pdf.margin_box.height], :width => 35.mm, :height => 12.mm) do
       @pdf.stroke_bounds
     end
+  end
 
-    puts "Total available height: #{@pdf.y - @pdf.bounds.absolute_bottom}"
-
-
+  def draw_body
     @pdf.bounding_box([0,@pdf.margin_box.height - 14.mm], :width => @pdf.margin_box.width, :height => @pdf.margin_box.height - 25.mm) do
       @pdf.stroke_color = @options[:color]
       @pdf.stroke do
@@ -53,7 +51,9 @@ class Note
       @pdf.stroke_color = "ABABAB"
       @pdf.stroke_bounds
     end
+  end
 
+  def draw_footer
     @pdf.float do
       @pdf.move_down 15.mm
       @pdf.bounding_box([@pdf.margin_box.absolute_right - 40.mm, @pdf.margin_box.absolute_bottom - 5.mm], :width => 40.mm) do
