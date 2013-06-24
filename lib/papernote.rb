@@ -3,6 +3,7 @@ require "papernote/formats/cornell"
 require "papernote/formats/ruled"
 require "papernote/formats/graph"
 require "papernote/formats/dot"
+require "papernote/formats/corndots"
 
 module Papernote
   def self.generate(format, options={})
