@@ -12,7 +12,7 @@ class Dot
     @pdf.line_width = 0.25.mm
     (@width, @height) = @pdf.page.dimensions[2,3]
     debug("Dimensions are W: #{@width}, H: #{@height}")
-    @options = { area: :graph, spacing: 15, color: "BEBEBE" }.merge(options)
+    @options = { area: :graph, spacing: 15, color: "d8d8d8" }.merge(options)
   end
 
   def make_page

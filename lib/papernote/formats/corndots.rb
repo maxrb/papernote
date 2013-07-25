@@ -14,7 +14,7 @@ class Corndots
     debug("Dimensions are W: #{@width}, H: #{@height}")
     @options = {
       spacing: 15,
-      color: "BEBEBE",
+      color: "d8d8d8",
       header_height: 12.mm,
       header_date_width: 35.mm,
       element_margin: 2.mm,
