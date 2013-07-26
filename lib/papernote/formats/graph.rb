@@ -5,7 +5,7 @@ require 'prawn/measurement_extensions'
 require 'methadone'
 
 class Graph
-  include Methadone::CLILogging
+  # include Methadone::CLILogging
 
   def initialize(options={})
     @pdf = Prawn::Document.new
@@ -19,10 +19,10 @@ class Graph
     draw_header
     draw_body
     draw_footer
-    @pdf.start_new_page
-    draw_header(:mirror)
-    draw_body(:mirror)
-    draw_footer(:mirror)
+    # @pdf.start_new_page
+    # draw_header(:mirror)
+    # draw_body(:mirror)
+    # draw_footer(:mirror)
     @pdf
   end
 
@@ -37,7 +37,7 @@ class Graph
 
   def draw_header(mirror = false)
 
-    @pdf.stroke_color = "e3f4f8"
+    @pdf.stroke_color = "91d4e4"
 
     y = @pdf.margin_box.height
     height = 8.mm
@@ -65,8 +65,9 @@ class Graph
   def draw_body(mirror = false)
     gutter_width = 20.mm
     puts "Width x Height = #{@pdf.bounds.width} x #{@pdf.bounds.height}"
+
     @pdf.bounding_box([0,@pdf.margin_box.height - 10.mm], :width => @pdf.margin_box.width, :height => @pdf.margin_box.height - 20.mm) do
-      # @pdf.stroke_color = @options[:color]
+      @pdf.stroke_color = @options[:color]
       @pdf.stroke do
         x = mirror ? @pdf.bounds.width - @options[:spacing] : @options[:spacing]
 
@@ -90,20 +91,26 @@ class Graph
         end
       end
 
-      @pdf.stroke_color = "e3f4f8"
+      @pdf.stroke_color = "91d4e4"
       @pdf.stroke_bounds
     end
   end
 
   def draw_footer(mirror = false)
 
-    x = mirror ? 0.mm : @pdf.margin_box.absolute_right - 33.mm
+    x = mirror ? 0.mm : @pdf.margin_box.width - 19.mm
 
-    @pdf.bounding_box([x, @pdf.margin_box.absolute_bottom - 10.mm], :width => 40.mm) do
-      texts = [{ :text => "© 12G Solutions", :font => 'Helvetica', :size => 8, :color=>"e3f4f8" }]
+    # logo = "/Users/max/repos/12gsolutions.net/internal/paperme/papernote/emblem.png"
+    # @pdf.image logo, :at => [x,@pdf.margin_box.absolute_bottom - 5.mm], :width => 15.mm
+
+    @pdf.bounding_box([x, @pdf.margin_box.absolute_bottom - 7.mm], :width => 40.mm) do
+      texts = [{ :text => "© projectnot.es", :font => 'Helvetica', :size => 8, :color=>"91d4e4" }]
       text_box = Prawn::Text::Formatted::Box.new(texts, :document => @pdf, :width => @pdf.width_of("© 12G Solutions"))
       text_box.render
     end
+
+    @pdf.stroke_color = "91d4e4"
+
 
     center = (@pdf.margin_box.width / 2)
     nextprev_indicator_radius = 1.mm
