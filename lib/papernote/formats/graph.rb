@@ -19,57 +19,70 @@ class Graph
     draw_header
     draw_body
     draw_footer
+    @pdf.start_new_page
+    draw_header(:mirror)
+    draw_body(:mirror)
+    draw_footer(:mirror)
     @pdf
   end
 
-  def draw_header
+  def draw_region(x, y, width, height)
+    # Draw topic area
+    @pdf.bounding_box([x, y], :width => width, :height => height) do
+      @pdf.stroke_bounds
+    end
+
+    return width
+  end
+
+  def draw_header(mirror = false)
+
     @pdf.stroke_color = "e3f4f8"
 
     y = @pdf.margin_box.height
     height = 8.mm
     total_blocks = @pdf.margin_box.width / @options[:spacing]
     spacer_width = 1 * @options[:spacing]
-    title_area_blocks = total_blocks / 2
-    title_area_width = title_area_blocks * @options[:spacing]
+    title_blocks = total_blocks / 2
+    title_width = title_blocks * @options[:spacing]
 
-    topic_area_blocks = (total_blocks / 4) - 1
-    topic_area_width = topic_area_blocks * @options[:spacing]
+    topic_blocks = (total_blocks / 4) - 1
+    topic_width = topic_blocks * @options[:spacing]
 
-    date_area_blocks = (total_blocks / 4) - 1
-    date_area_width = date_area_blocks * @options[:spacing]
+    date_blocks = (total_blocks / 4) - 1
+    date_width = date_blocks * @options[:spacing]
+
 
     x = 0
-    # Draw title area
-    @pdf.bounding_box([x, y], :width => title_area_width, :height => height) do
-      @pdf.stroke_bounds
-    end
-
-    x += title_area_width + spacer_width
-
-    # Draw topic area
-    @pdf.bounding_box([x, y], :width => topic_area_width, :height => height) do
-      @pdf.stroke_bounds
-    end
-
-    x += topic_area_width + spacer_width
-
-    # Draw date area
-    @pdf.bounding_box([x, y], :width => date_area_width, :height => height) do
-      @pdf.stroke_bounds
-    end
+    x += draw_region(x, y, mirror ? date_width : title_width, height)
+    x += spacer_width
+    x += draw_region(x, y, topic_width, height)
+    x += spacer_width
+    
+    draw_region(x, y, mirror ? title_width : date_width, height)
   end
 
-  def draw_body
+  def draw_body(mirror = false)
+    gutter_width = 20.mm
     puts "Width x Height = #{@pdf.bounds.width} x #{@pdf.bounds.height}"
     @pdf.bounding_box([0,@pdf.margin_box.height - 10.mm], :width => @pdf.margin_box.width, :height => @pdf.margin_box.height - 20.mm) do
       # @pdf.stroke_color = @options[:color]
       @pdf.stroke do
-        x = @options[:spacing]
-        while (x < @pdf.bounds.width - 20.mm) do
-          @pdf.vertical_line 0, @pdf.bounds.height, :at => x
-          x += @options[:spacing]
+        x = mirror ? @pdf.bounds.width - @options[:spacing] : @options[:spacing]
+
+        if mirror
+          while (x > @options[:spacing] + gutter_width) do
+            @pdf.vertical_line 0, @pdf.bounds.height, :at => x
+            x -= @options[:spacing]
+          end
+        else
+          while (x < @pdf.bounds.width - gutter_width) do
+            @pdf.vertical_line 0, @pdf.bounds.height, :at => x
+            x += @options[:spacing]
+          end
         end
 
+          
         y = @pdf.bounds.height - @options[:spacing]
         while (y - @options[:spacing] > 0) do
           @pdf.horizontal_line 0, @pdf.bounds.width, :at => y
@@ -82,8 +95,11 @@ class Graph
     end
   end
 
-  def draw_footer
-    @pdf.bounding_box([@pdf.margin_box.absolute_right - 33.mm, @pdf.margin_box.absolute_bottom - 10.mm], :width => 40.mm) do
+  def draw_footer(mirror = false)
+
+    x = mirror ? 0.mm : @pdf.margin_box.absolute_right - 33.mm
+
+    @pdf.bounding_box([x, @pdf.margin_box.absolute_bottom - 10.mm], :width => 40.mm) do
       texts = [{ :text => "© 12G Solutions", :font => 'Helvetica', :size => 8, :color=>"e3f4f8" }]
       text_box = Prawn::Text::Formatted::Box.new(texts, :document => @pdf, :width => @pdf.width_of("© 12G Solutions"))
       text_box.render
@@ -99,7 +115,8 @@ class Graph
     @pdf.circle [center + spacing + page_number_radius + nextprev_indicator_radius, top], nextprev_indicator_radius
 
     page_id_block_width = 4 * @options[:spacing]
-    @pdf.bounding_box([0,@pdf.margin_box.absolute_bottom - 5.mm], :width => page_id_block_width, :height => 8.mm) do
+    x = mirror ? @pdf.margin_box.width - page_id_block_width : 0
+    @pdf.bounding_box([x,@pdf.margin_box.absolute_bottom - 5.mm], :width => page_id_block_width, :height => 8.mm) do
       @pdf.stroke_bounds
     end
   end
